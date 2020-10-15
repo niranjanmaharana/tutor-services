@@ -1,13 +1,12 @@
 package com.niranzan.tutor;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TutorServicesApplicationTests {
+public class ApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
 	}
-
 }
