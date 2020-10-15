@@ -37,8 +37,10 @@ public class UserRequestView {
 
 	@Size(max = 200)
 	private String profilePic;
-	
+
 	private Set<String> role;
+
+	private boolean active;
 
 	/**
 	 * @return the id
@@ -173,5 +175,13 @@ public class UserRequestView {
 	 */
 	public void setProfilePic(String profilePic) {
 		this.profilePic = profilePic;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

@@ -22,4 +22,11 @@ public interface AppConstants {
 	
 	public static final String UNKNOWN_VAL = "UNK";
 	public static final String NA_VAL = "NA";
+	
+	public static final String CNSTRNT_UNQ_USERNAME = "UNIQUE_USERNAME";
+	public static final String CNSTRNT_UNQ_USERNAME_MSG = "Username already registered!";
+	public static final String CNSTRNT_UNQ_EMAIL = "UNIQUE_EMAIL";
+	public static final String CNSTRNT_UNQ_EMAIL_MSG = "Email already registered!";
+	public static final String CNSTRNT_UNQ_MOBILE = "UNIQUE_MOBILE";
+	public static final String CNSTRNT_UNQ_MOBILE_MSG = "Mobile number already registered!";
 }

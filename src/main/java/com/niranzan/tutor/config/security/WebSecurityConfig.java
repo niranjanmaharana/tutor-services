@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -41,6 +41,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private List<String> allowedMethods;
 	@Value("#{'${whitelist}'.split(',')}")
 	private List<String> whiteListUrls;
+	@Value("#{'${app.jwt.secret}'}")
+	private String secretKey;
 	
 	@Bean
 	public JwtAuthTokenFilter authenticationJwtTokenFilter() {
@@ -60,8 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		PasswordEncoder encoder = new BCryptPasswordEncoder();
-		return encoder;
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.niranzan.tutor.enums;
 
+import com.niranzan.tutor.exceptions.ResourceNotFoundException;
+
 public enum  UserRoleEnum {
 	ROLE_SUPERADMIN(0, "ROLE_SUPERADMIN"),
     ROLE_ADMIN(1, "ROLE_ADMIN"),
@@ -14,7 +16,11 @@ public enum  UserRoleEnum {
 	}
 	
 	public static UserRoleEnum getById(int id){
-		return UserRoleEnum.values()[id];
+		try {
+			return UserRoleEnum.values()[id];
+		} catch(Exception exception) {
+			throw new ResourceNotFoundException("User role(" + (id + 1) + ") not found!");
+		}
 	}
 	
 	public int getId(){

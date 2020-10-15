@@ -12,10 +12,12 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.niranzan.tutor.constant.AppConstants;
 import com.niranzan.tutor.enums.UserRoleEnum;
 import com.niranzan.tutor.exceptions.DuplicateFieldException;
 import com.niranzan.tutor.exceptions.InvalidFormatException;
@@ -65,15 +67,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public UserProfile save(UserRequestView request) {
-		if (userRepository.existsByUsername(request.getUsername()))
-			throw new DuplicateFieldException("Username already exists !");
-		if (userRepository.existsByEmail(request.getEmail()))
-			throw new DuplicateFieldException("Email already exists !");
-		if (userRepository.existsByMobile(request.getMobile()))
-			throw new DuplicateFieldException("Mobile number already registered !");
-		if (!passwordValidator.isValid(request.getPassword()))
-			throw new InvalidFormatException(invalidPasswordMessage);
-
 		UserProfile user = new UserProfile(request.getFirstNm(), request.getLastNm(), request.getUsername(),
 				request.getEmail(), request.getMobile(), request.getPassword(), request.getProfilePic());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -92,19 +85,26 @@ public class UserServiceImpl implements UserService {
 		});
 
 		user.setAuthorities(roles);
-		return userRepository.save(user);
+		user.setActive(request.isActive());
+		try {
+			return userRepository.save(user);
+		} catch(DataIntegrityViolationException exception) {
+			if(exception.getMessage().contains(AppConstants.CNSTRNT_UNQ_USERNAME)) {
+				throw new DuplicateFieldException(AppConstants.CNSTRNT_UNQ_USERNAME_MSG);
+			} else if(exception.getMessage().contains(AppConstants.CNSTRNT_UNQ_MOBILE)) {
+				throw new DuplicateFieldException(AppConstants.CNSTRNT_UNQ_MOBILE_MSG);
+			} else if(exception.getMessage().contains(AppConstants.CNSTRNT_UNQ_EMAIL)) {
+				throw new DuplicateFieldException(AppConstants.CNSTRNT_UNQ_EMAIL_MSG);
+			} else {
+				throw new DuplicateFieldException();
+			}
+		}
 	}
 
 	@Override
 	@Transactional
 	public UserProfile update(UserRequestView request) {
 		UserProfile user = userRepository.findById(request.getId()).orElse(null);
-		if (user == null)
-			throw new ResourceNotFoundException("User not found with id : " + request.getId());
-		if (userRepository.existsByEmailExceptUser(request.getId(), request.getEmail()))
-			throw new DuplicateFieldException("Email already registered !");
-		if (userRepository.existsByMobileExceptUser(request.getId(), request.getMobile()))
-			throw new DuplicateFieldException("Mobile number already registered !");
 		user.setFirstNm(request.getFirstNm());
 		user.setLastNm(request.getLastNm());
 		user.setEmail(request.getEmail());
@@ -114,11 +114,23 @@ public class UserServiceImpl implements UserService {
 
 		strRoles.forEach(role -> {
 			Authority adminRole = roleRepository.findByName(UserRoleEnum.getById(Integer.parseInt(role) - 1))
-					.orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+					.orElseThrow(() -> new ResourceNotFoundException("User role(" + role + ") not found!"));
 			roles.add(adminRole);
 		});
 		user.setAuthorities(roles);
-		return userRepository.save(user);
+		try {
+			return userRepository.save(user);
+		} catch(DataIntegrityViolationException exception) {
+			if(exception.getMessage().contains(AppConstants.CNSTRNT_UNQ_USERNAME)) {
+				throw new DuplicateFieldException(AppConstants.CNSTRNT_UNQ_USERNAME_MSG);
+			} else if(exception.getMessage().contains(AppConstants.CNSTRNT_UNQ_MOBILE)) {
+				throw new DuplicateFieldException(AppConstants.CNSTRNT_UNQ_MOBILE_MSG);
+			} else if(exception.getMessage().contains(AppConstants.CNSTRNT_UNQ_EMAIL)) {
+				throw new DuplicateFieldException(AppConstants.CNSTRNT_UNQ_EMAIL_MSG);
+			} else {
+				throw new DuplicateFieldException();
+			}
+		}
 	}
 
 	@Override

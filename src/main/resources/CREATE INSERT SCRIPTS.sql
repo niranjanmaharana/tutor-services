@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS `authority` (
 -- Dumping data for table muzic_store.authority: 0 rows
 /*!40000 ALTER TABLE `authority` DISABLE KEYS */;
 INSERT INTO `authority` (`id`, `active`, `created_by`, `created_dtm`, `updated_by`, `updated_dtm`, `valid_from`, `valid_to`, `version`, `name`) VALUES
-	(1, b'1', NULL, '2020-03-29 21:25:51', NULL, '2020-03-29 21:25:52', '2020-03-29 21:25:53', '8888-12-31 21:25:54', 1, 'ROLE_SUPERADMIN'),
-	(2, b'1', NULL, '2020-03-29 21:26:16', NULL, '2020-03-29 21:26:17', '2020-03-29 21:26:18', '8888-12-31 21:26:19', 1, 'ROLE_ADMIN'),
-	(3, b'1', NULL, '2020-03-29 21:26:35', NULL, '2020-03-29 21:26:36', '2020-03-29 21:26:36', '8888-12-31 21:26:37', 1, 'ROLE_USER');
+	(1, b'1', NULL, CURRENT_TIMESTAMP, NULL, NULL, CURRENT_TIMESTAMP, '8888-12-31 23:59:59', 1, 'ROLE_SUPERADMIN'),
+	(2, b'1', NULL, CURRENT_TIMESTAMP, NULL, NULL, CURRENT_TIMESTAMP, '8888-12-31 23:59:59', 1, 'ROLE_ADMIN'),
+	(3, b'1', NULL, CURRENT_TIMESTAMP, NULL, NULL, CURRENT_TIMESTAMP, '8888-12-31 23:59:59', 1, 'ROLE_USER');
 /*!40000 ALTER TABLE `authority` ENABLE KEYS */;
 
 -- Dumping structure for table muzic_store.user_authority

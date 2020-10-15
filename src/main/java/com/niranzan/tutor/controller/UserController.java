@@ -68,19 +68,21 @@ public class UserController {
 	@PostMapping
 	public ResponseEntity<SimpleResponseEntity> registerUser(@Valid @RequestBody UserRequestView request) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		LOGGER.info(username + " trying to register user.");
+		LOGGER.info("{} trying to register {}.", username, request.getUsername());
 		try {
 			UserProfile user = userService.save(request);
+			request.setPassword(null);
 			request.setId(user.getId());
-			LOGGER.info(username + " registered user successfully.");
+			LOGGER.info("{} registered {} successfully.", username, request.getUsername());
 			return ResponseEntity.ok()
 					.body(new SimpleResponseEntity(HttpStatus.OK.value(), "User registered successfully!", request));
-		} catch (DuplicateFieldException exception) {
+		} catch (DuplicateFieldException | InvalidFormatException exception) {
 			return ResponseEntity.ok()
 					.body(new SimpleResponseEntity(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), ""));
-		} catch (InvalidFormatException exception) {
+		} catch (ResourceNotFoundException exception) {
+			LOGGER.info(exception.getMessage());
 			return ResponseEntity.ok()
-					.body(new SimpleResponseEntity(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), ""));
+					.body(new SimpleResponseEntity(HttpStatus.NOT_FOUND.value(), exception.getMessage(), null));
 		} catch (Exception exception) {
 			return ResponseEntity.ok().body(
 					new SimpleResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error !", ""));

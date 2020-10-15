@@ -79,27 +79,25 @@ public class AuthController {
 	public ResponseEntity<SimpleResponseEntity> registerUser(@Valid @RequestBody UserRequestView request) {
 		try {
 			LOGGER.info("{} trying to register.", request.getUsername());
+			request.setActive(false);
 			UserProfile user = userService.save(request);
+			request.setPassword(null);
 			request.setId(user.getId());
 			LOGGER.info("{} registered as a new user.", request.getUsername());
 			return ResponseEntity.ok()
 					.body(new SimpleResponseEntity(HttpStatus.OK.value(), AppConstants.SUCCESS_RESPONSE_MSG, request));
-		} catch (DuplicateFieldException exception) {
-			LOGGER.info("Exception occured while registering user: {}", exception.getMessage());
+		} catch (DuplicateFieldException | InvalidFormatException exception) {
+			LOGGER.info(exception.getMessage());
 			return ResponseEntity.ok()
 					.body(new SimpleResponseEntity(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), null));
-		} catch (InvalidFormatException exception) {
-			LOGGER.info("Exception occured while registering user: {}", exception.getMessage());
+		} catch (ResourceNotFoundException exception) {
+			LOGGER.info(exception.getMessage());
 			return ResponseEntity.ok()
-					.body(new SimpleResponseEntity(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), null));
-		} catch(ResourceNotFoundException exception) {
-			LOGGER.info("Exception occured while registering user: {}", exception.getMessage());
-			return ResponseEntity.ok()
-					.body(new SimpleResponseEntity(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), null));
+					.body(new SimpleResponseEntity(HttpStatus.NOT_FOUND.value(), exception.getMessage(), null));
 		} catch (Exception exception) {
-			LOGGER.info("Exception occured while registering user: {}", exception.getMessage());
+			LOGGER.info(exception.getMessage());
 			return ResponseEntity.ok().body(
-					new SimpleResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error !", null));
+					new SimpleResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.name(), null));
 		}
 	}
 }

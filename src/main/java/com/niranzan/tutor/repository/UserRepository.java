@@ -13,11 +13,13 @@ import com.niranzan.tutor.model.UserProfile;
 public interface UserRepository extends JpaRepository<UserProfile, Long> {
     Optional<UserProfile> findByUsername(String username);
     Optional<UserProfile> findByEmail(String email);
+    
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+    Boolean existsByMobile(String mobile);
+    
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN 'true' ELSE 'false' END FROM UserProfile u WHERE u.email = :email and u.id != :id")
     Boolean existsByEmailExceptUser(@Param("id") Long id, @Param("email") String email);
-    Boolean existsByMobile(String mobile);
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN 'true' ELSE 'false' END FROM UserProfile u WHERE u.mobile = :mobile and u.id != :id")
     Boolean existsByMobileExceptUser(@Param("id") Long id, @Param("mobile") String mobile);
 }
